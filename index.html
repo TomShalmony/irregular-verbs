@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Irregular Verbs — Preterite Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f7f6f3;
+  --surface: #ffffff;
+  --surface2: #f0efe9;
+  --border: rgba(0,0,0,0.1);
+  --border-strong: rgba(0,0,0,0.18);
+  --text: #1a1a18;
+  --text-sec: #6b6b65;
+  --text-muted: #a0a09a;
+  --accent: #2563eb;
+  --accent-bg: #eff6ff;
+  --accent-text: #1d4ed8;
+  --success: #16a34a;
+  --success-bg: #f0fdf4;
+  --success-border: #bbf7d0;
+  --danger: #dc2626;
+  --danger-bg: #fef2f2;
+  --danger-border: #fecaca;
+  --warning: #d97706;
+  --warning-bg: #fffbeb;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #18181a;
+    --surface: #242426;
+    --surface2: #2e2e30;
+    --border: rgba(255,255,255,0.1);
+    --border-strong: rgba(255,255,255,0.18);
+    --text: #f0f0ec;
+    --text-sec: #9a9a94;
+    --text-muted: #6a6a64;
+    --accent: #3b82f6;
+    --accent-bg: #1e3a5f;
+    --accent-text: #93c5fd;
+    --success: #22c55e;
+    --success-bg: #14532d;
+    --success-border: #166534;
+    --danger: #ef4444;
+    --danger-bg: #450a0a;
+    --danger-border: #7f1d1d;
+    --warning: #f59e0b;
+    --warning-bg: #451a03;
+    --surface2: #2a2a2c;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; background: var(--bg); font-family: 'Inter', system-ui, sans-serif; color: var(--text); }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+#app { flex: 1; max-width: 480px; margin: 0 auto; width: 100%; padding: 0 0 env(safe-area-inset-bottom); display: flex; flex-direction: column; }
+
+.screen { display: none; flex-direction: column; flex: 1; }
+.screen.active { display: flex; }
+
+/* ── HOME ── */
+.home-top { padding: 2.5rem 1.5rem 1rem; }
+.home-top h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+.home-top p { font-size: 14px; color: var(--text-sec); }
+.stats-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 0 1.5rem 1.25rem; }
+.stat { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px; text-align: center; }
+.stat-num { font-size: 22px; font-weight: 600; color: var(--text); }
+.stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.03em; }
+.mode-list { padding: 0 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 10px; }
+.mode-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 15px 16px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: background 0.12s; -webkit-user-select: none; user-select: none; }
+.mode-card:active { background: var(--surface2); transform: scale(0.99); }
+.mode-icon { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.m-flash { background: #eff6ff; } .m-choice { background: #f0fdf4; } .m-write { background: #fffbeb; } .m-fill { background: #fdf4ff; } .m-speed { background: #fff7ed; }
+@media (prefers-color-scheme: dark) {
+  .m-flash { background: #1e3a5f; } .m-choice { background: #14532d; } .m-write { background: #451a03; } .m-fill { background: #3b0764; } .m-speed { background: #431407; }
+}
+.mode-info { flex: 1; }
+.mode-info strong { font-size: 15px; font-weight: 500; display: block; margin-bottom: 1px; }
+.mode-info span { font-size: 13px; color: var(--text-sec); }
+.chevron { color: var(--text-muted); font-size: 18px; }
+.diff-badge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 20px; letter-spacing: 0.04em; }
+.diff-easy { background: var(--success-bg); color: var(--success); }
+.diff-med { background: var(--warning-bg); color: var(--warning); }
+.diff-hard { background: var(--danger-bg); color: var(--danger); }
+
+/* ── SHARED EXERCISE ── */
+.ex-header { display: flex; align-items: center; gap: 10px; padding: 1rem 1.5rem 0.5rem; }
+.back-btn { background: none; border: none; cursor: pointer; color: var(--text-sec); font-size: 22px; padding: 4px; line-height: 1; display: flex; align-items: center; border-radius: 8px; }
+.back-btn:active { background: var(--surface2); }
+.ex-title { font-size: 15px; font-weight: 500; }
+.ex-counter { margin-left: auto; font-size: 13px; color: var(--text-muted); }
+.progress-track { height: 3px; background: var(--border); margin: 0 1.5rem 1rem; border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+.card-area { flex: 1; padding: 0 1.5rem 1.5rem; display: flex; flex-direction: column; gap: 14px; }
+
+/* ── FLASHCARD ── */
+.flashcard { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 2.5rem 1.5rem; text-align: center; cursor: pointer; min-height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+.flashcard:active { background: var(--surface2); }
+.verb-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.verb-main { font-size: 38px; font-weight: 600; }
+.flip-hint { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.answer-box { background: var(--success-bg); border: 0.5px solid var(--success-border); border-radius: var(--radius); padding: 14px 16px; display: none; }
+.answer-box.shown { display: block; }
+.answer-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+.a-label { font-size: 12px; color: var(--text-muted); }
+.a-word { font-size: 18px; font-weight: 600; color: var(--success); }
+.a-pp { font-size: 15px; color: var(--text-sec); font-weight: 400; }
+.btn-row { display: flex; gap: 8px; margin-top: auto; }
+.btn { flex: 1; padding: 14px; border-radius: var(--radius); border: 0.5px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 15px; font-weight: 500; cursor: pointer; font-family: inherit; transition: background 0.1s, transform 0.08s; }
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--accent); color: white; border-color: transparent; }
+.btn-primary:active { opacity: 0.88; }
+.btn-success { background: var(--success); color: white; border-color: transparent; }
+.btn-danger { background: var(--danger); color: white; border-color: transparent; }
+
+/* ── MULTIPLE CHOICE ── */
+.mc-q { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem 1.5rem; text-align: center; }
+.mc-prompt { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.mc-verb { font-size: 34px; font-weight: 600; }
+.mc-opts { display: flex; flex-direction: column; gap: 9px; }
+.mc-opt { background: var(--surface); border: 0.5px solid var(--border-strong); border-radius: var(--radius); padding: 15px 16px; font-size: 17px; font-weight: 500; cursor: pointer; text-align: left; font-family: inherit; color: var(--text); transition: all 0.1s; }
+.mc-opt:active:not(.disabled) { background: var(--surface2); }
+.mc-opt.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success); }
+.mc-opt.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger); }
+.mc-opt.disabled { cursor: default; }
+.feedback { text-align: center; font-size: 14px; font-weight: 500; min-height: 22px; }
+.feedback.ok { color: var(--success); }
+.feedback.bad { color: var(--danger); }
+
+/* ── WRITE / FILL ── */
+.q-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem 1.5rem; text-align: center; }
+.q-sublabel { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; letter-spacing: 0.05em; text-transform: uppercase; }
+.sentence-text { font-size: 18px; line-height: 1.7; color: var(--text); }
+.blank { display: inline-block; border-bottom: 2px solid var(--accent); min-width: 80px; color: var(--text-muted); font-style: italic; }
+.fr-hint { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+.input-wrap { display: flex; flex-direction: column; gap: 8px; }
+.verb-input { font-size: 20px; text-align: center; padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text); width: 100%; font-family: inherit; outline: none; transition: border-color 0.15s; }
+.verb-input:focus { border-color: var(--accent); }
+.verb-input.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+.verb-input.wrong { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
+
+/* ── SPEED ── */
+.speed-top { text-align: center; }
+.timer-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 6px; }
+.timer-wrap svg { transform: rotate(-90deg); }
+.t-bg { fill: none; stroke: var(--border); stroke-width: 5; }
+.t-arc { fill: none; stroke: var(--accent); stroke-width: 5; stroke-dasharray: 220; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+.t-arc.warn { stroke: var(--warning); }
+.t-arc.danger { stroke: var(--danger); }
+.t-num { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 22px; font-weight: 600; }
+.speed-score { font-size: 14px; color: var(--text-sec); margin-bottom: 4px; }
+
+/* ── RESULTS ── */
+.results-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 2rem 1.5rem 1.5rem; text-align: center; }
+.result-emoji { font-size: 52px; margin-bottom: 12px; }
+.result-score { font-size: 44px; font-weight: 600; }
+.result-msg { font-size: 16px; color: var(--text-sec); margin: 6px 0 1.5rem; }
+.missed-box { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem; width: 100%; text-align: left; margin-bottom: 1rem; max-height: 220px; overflow-y: auto; }
+.missed-head { font-size: 11px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+.missed-item { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 0.5px solid var(--border); font-size: 14px; }
+.missed-item:last-child { border-bottom: none; }
+.missed-inf { font-weight: 500; }
+.missed-ans { color: var(--text-sec); }
+
+/* ── DIFFICULTY INDICATOR ── */
+.diff-row { display: flex; gap: 3px; align-items: center; margin-top: 4px; }
+.diff-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-strong); }
+.diff-dot.filled { background: var(--accent); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HOME -->
+  <div id="home" class="screen active">
+    <div class="home-top">
+      <h1>Irregular Verbs ✏️</h1>
+      <p>Preterite practice · English B1</p>
+    </div>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-num" id="s-mastered">0</div><div class="stat-lbl">mastered</div></div>
+      <div class="stat"><div class="stat-num" id="s-streak">0</div><div class="stat-lbl">streak</div></div>
+      <div class="stat"><div class="stat-num" id="s-sessions">0</div><div class="stat-lbl">sessions</div></div>
+    </div>
+    <div class="mode-list">
+      <div class="mode-card" onclick="startMode('flash')">
+        <div class="mode-icon m-flash">🃏</div>
+        <div class="mode-info"><strong>Flashcards</strong><span>See and recognise each form</span></div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="mode-card" onclick="startMode('choice')">
+        <div class="mode-icon m-choice">☑️</div>
+        <div class="mode-info"><strong>Multiple choice</strong><span>Pick the correct preterite (4 options)</span></div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="mode-card" onclick="startMode('write')">
+        <div class="mode-icon m-write">✍️</div>
+        <div class="mode-info"><strong>Write it</strong><span>Spell the preterite from memory</span></div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="mode-card" onclick="startMode('fill')">
+        <div class="mode-icon m-fill">📝</div>
+        <div class="mode-info"><strong>Fill in the blank</strong><span>Use it in a real sentence</span></div>
+        <span class="chevron">›</span>
+      </div>
+      <div class="mode-card" onclick="startMode('speed')">
+        <div class="mode-icon m-speed">⚡</div>
+        <div class="mode-info"><strong>Speed round</strong><span>20 verbs against the clock</span></div>
+        <span class="chevron">›</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLASHCARDS -->
+  <div id="flash-screen" class="screen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goHome()">‹</button>
+      <span class="ex-title">Flashcards</span>
+      <span class="ex-counter" id="flash-ctr"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="flash-prog"></div></div>
+    <div class="card-area">
+      <div class="flashcard" onclick="flipCard()">
+        <div class="verb-label">infinitive</div>
+        <div class="verb-main" id="flash-inf"></div>
+        <div class="flip-hint" id="flip-hint">tap to reveal →</div>
+      </div>
+      <div class="answer-box" id="flash-answer">
+        <div class="answer-row"><span class="a-label">preterite</span><span class="a-word" id="flash-past"></span></div>
+        <div class="answer-row"><span class="a-label">past participle</span><span class="a-pp" id="flash-pp"></span></div>
+      </div>
+      <div class="btn-row" id="flash-btns" style="display:none">
+        <button class="btn btn-danger" onclick="flashResult(false)">✗  Again</button>
+        <button class="btn btn-success" onclick="flashResult(true)">✓  Got it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MULTIPLE CHOICE -->
+  <div id="choice-screen" class="screen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goHome()">‹</button>
+      <span class="ex-title">Multiple choice</span>
+      <span class="ex-counter" id="choice-ctr"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="choice-prog"></div></div>
+    <div class="card-area">
+      <div class="mc-q">
+        <div class="mc-prompt">What is the preterite of</div>
+        <div class="mc-verb" id="choice-inf"></div>
+      </div>
+      <div class="mc-opts" id="choice-opts"></div>
+      <div class="feedback" id="choice-fb"></div>
+      <div class="btn-row" id="choice-next" style="display:none;margin-top:auto">
+        <button class="btn btn-primary" onclick="nextChoice()">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WRITE IT -->
+  <div id="write-screen" class="screen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goHome()">‹</button>
+      <span class="ex-title">Write it</span>
+      <span class="ex-counter" id="write-ctr"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="write-prog"></div></div>
+    <div class="card-area">
+      <div class="q-card">
+        <div class="verb-label">infinitive</div>
+        <div class="verb-main" id="write-inf"></div>
+      </div>
+      <div class="input-wrap">
+        <input class="verb-input" type="text" id="write-input" placeholder="type the preterite…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')checkWrite()">
+        <div class="feedback" id="write-fb"></div>
+      </div>
+      <div class="btn-row" style="margin-top:auto">
+        <button class="btn" id="write-check" onclick="checkWrite()">Check</button>
+        <button class="btn btn-primary" id="write-next" onclick="nextWrite()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILL IN BLANK -->
+  <div id="fill-screen" class="screen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goHome()">‹</button>
+      <span class="ex-title">Fill in the blank</span>
+      <span class="ex-counter" id="fill-ctr"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="fill-prog"></div></div>
+    <div class="card-area">
+      <div class="q-card">
+        <div class="sentence-text" id="fib-sent"></div>
+        <div class="fr-hint" id="fib-fr"></div>
+      </div>
+      <div class="input-wrap">
+        <input class="verb-input" type="text" id="fill-input" placeholder="type the missing verb…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')checkFill()">
+        <div class="feedback" id="fill-fb"></div>
+      </div>
+      <div class="btn-row" style="margin-top:auto">
+        <button class="btn" id="fill-check" onclick="checkFill()">Check</button>
+        <button class="btn btn-primary" id="fill-next" onclick="nextFill()" style="display:none">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPEED ROUND -->
+  <div id="speed-screen" class="screen">
+    <div class="ex-header">
+      <button class="back-btn" onclick="goHome()">‹</button>
+      <span class="ex-title">Speed round</span>
+    </div>
+    <div class="card-area">
+      <div class="speed-top">
+        <div class="timer-wrap">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle class="t-bg" cx="40" cy="40" r="35"/>
+            <circle class="t-arc" id="t-arc" cx="40" cy="40" r="35"/>
+          </svg>
+          <div class="t-num" id="t-num">10</div>
+        </div>
+        <div class="speed-score" id="sp-score">0 / 20</div>
+      </div>
+      <div class="q-card" style="text-align:center">
+        <div class="verb-label">preterite of</div>
+        <div class="verb-main" id="speed-inf"></div>
+      </div>
+      <div class="input-wrap">
+        <input class="verb-input" type="text" id="speed-input" placeholder="type fast…"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+          onkeydown="if(event.key==='Enter')checkSpeed()">
+        <div class="feedback" id="speed-fb"></div>
+      </div>
+      <div class="btn-row" style="margin-top:auto">
+        <button class="btn btn-primary" onclick="checkSpeed()">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div id="results-screen" class="screen">
+    <div class="results-wrap">
+      <div class="result-emoji" id="r-emoji"></div>
+      <div class="result-score" id="r-score"></div>
+      <div class="result-msg" id="r-msg"></div>
+      <div class="missed-box" id="r-missed" style="display:none">
+        <div class="missed-head">Review these verbs</div>
+        <div id="r-missed-list"></div>
+      </div>
+      <div class="btn-row" style="width:100%;margin-top:auto">
+        <button class="btn" onclick="goHome()">Home</button>
+        <button class="btn btn-primary" id="retry-btn">Try again</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+// ── VERB DATA ──
+const VERBS = [
+  {inf:"be",fr:"être",past:"was/were",pp:"been",sentence:"She ___ very tired after school.",alt:["beed","were","wased","ised"]},
+  {inf:"have",fr:"avoir",past:"had",pp:"had",sentence:"They ___ a great time at the party.",alt:["haved","has","hads","haven"]},
+  {inf:"do",fr:"faire",past:"did",pp:"done",sentence:"He ___ his homework before dinner.",alt:["doed","does","done","didd"]},
+  {inf:"say",fr:"dire",past:"said",pp:"said",sentence:"She ___ hello and walked in.",alt:["sayed","says","saied","sied"]},
+  {inf:"go",fr:"aller",past:"went",pp:"gone",sentence:"We ___ to the cinema last night.",alt:["goed","goned","goes","wented"]},
+  {inf:"get",fr:"obtenir",past:"got",pp:"got",sentence:"I ___ a letter from my friend.",alt:["getted","getten","gots","gat"]},
+  {inf:"make",fr:"faire/fabriquer",past:"made",pp:"made",sentence:"She ___ a cake for her mum.",alt:["maked","makes","maded","maden"]},
+  {inf:"know",fr:"savoir/connaître",past:"knew",pp:"known",sentence:"He ___ the answer straight away.",alt:["knowed","knewed","known","knet"]},
+  {inf:"think",fr:"penser",past:"thought",pp:"thought",sentence:"I ___ it was a good idea.",alt:["thinked","thinkt","thunk","thoughd"]},
+  {inf:"take",fr:"prendre",past:"took",pp:"taken",sentence:"She ___ the bus to school.",alt:["taked","tooken","taket","toked"]},
+  {inf:"see",fr:"voir",past:"saw",pp:"seen",sentence:"We ___ a fox in the garden.",alt:["seed","seen","sawed","seeed"]},
+  {inf:"come",fr:"venir",past:"came",pp:"come",sentence:"He ___ home late last night.",alt:["comed","come","comes","camed"]},
+  {inf:"give",fr:"donner",past:"gave",pp:"given",sentence:"He ___ her a beautiful gift.",alt:["gived","given","gives","gaave"]},
+  {inf:"find",fr:"trouver",past:"found",pp:"found",sentence:"She ___ her keys under the sofa.",alt:["finded","founds","findet","fand"]},
+  {inf:"tell",fr:"dire/raconter",past:"told",pp:"told",sentence:"He ___ me a funny story.",alt:["telled","telded","tolded","teld"]},
+  {inf:"become",fr:"devenir",past:"became",pp:"become",sentence:"She ___ a famous singer.",alt:["becomed","become","becomed","becommed"]},
+  {inf:"leave",fr:"partir/quitter",past:"left",pp:"left",sentence:"He ___ the house early.",alt:["leaved","lift","lefted","leavd"]},
+  {inf:"feel",fr:"ressentir",past:"felt",pp:"felt",sentence:"I ___ nervous before the exam.",alt:["feeled","felt","felled","fealt"]},
+  {inf:"put",fr:"mettre/poser",past:"put",pp:"put",sentence:"She ___ the book on the table.",alt:["putted","puted","puts","putten"]},
+  {inf:"bring",fr:"apporter/amener",past:"brought",pp:"brought",sentence:"He ___ flowers for the teacher.",alt:["bringed","brang","brung","broughd"]},
+  {inf:"begin",fr:"commencer",past:"began",pp:"begun",sentence:"The film ___ at eight o'clock.",alt:["beginned","begun","beginged","bigan"]},
+  {inf:"keep",fr:"garder/continuer",past:"kept",pp:"kept",sentence:"She ___ all her old letters.",alt:["keeped","kepted","keeept","keped"]},
+  {inf:"hold",fr:"tenir",past:"held",pp:"held",sentence:"He ___ the door open for her.",alt:["holded","holled","helds","holted"]},
+  {inf:"write",fr:"écrire",past:"wrote",pp:"written",sentence:"She ___ a long email to her teacher.",alt:["writed","written","writes","wrotte"]},
+  {inf:"stand",fr:"se lever/rester debout",past:"stood",pp:"stood",sentence:"We ___ in the queue for an hour.",alt:["standed","stood","stands","stoud"]},
+  {inf:"hear",fr:"entendre",past:"heard",pp:"heard",sentence:"I ___ a strange noise last night.",alt:["heared","hearded","hears","heered"]},
+  {inf:"mean",fr:"signifier/vouloir dire",past:"meant",pp:"meant",sentence:"I ___ to call you yesterday.",alt:["meaned","meanted","means","ment"]},
+  {inf:"meet",fr:"rencontrer/retrouver",past:"met",pp:"met",sentence:"We ___ at the park.",alt:["meeted","mets","meet","mat"]},
+  {inf:"run",fr:"courir",past:"ran",pp:"run",sentence:"He ___ five kilometres this morning.",alt:["runned","runded","raned","runed"]},
+  {inf:"pay",fr:"payer",past:"paid",pp:"paid",sentence:"She ___ for the meal.",alt:["payed","paied","pays","payd"]},
+  {inf:"sit",fr:"s'asseoir",past:"sat",pp:"sat",sentence:"We ___ on the grass and had a picnic.",alt:["sited","sitted","sats","seted"]},
+  {inf:"speak",fr:"parler",past:"spoke",pp:"spoken",sentence:"She ___ to him after class.",alt:["speaked","spoken","speeks","speakt"]},
+  {inf:"lead",fr:"mener/diriger",past:"led",pp:"led",sentence:"She ___ the team to victory.",alt:["leaded","leed","ledded","laed"]},
+  {inf:"read",fr:"lire",past:"read",pp:"read",sentence:"I ___ a great book last weekend.",alt:["readed","redded","reads","reed"]},
+  {inf:"grow",fr:"pousser/grandir",past:"grew",pp:"grown",sentence:"The plant ___ very quickly.",alt:["growed","grown","gret","graew"]},
+  {inf:"lose",fr:"perdre",past:"lost",pp:"lost",sentence:"We ___ the match by one point.",alt:["losed","losts","losen","lossed"]},
+  {inf:"fall",fr:"tomber",past:"fell",pp:"fallen",sentence:"She ___ off her bike.",alt:["falled","fallen","falls","felled"]},
+  {inf:"send",fr:"envoyer",past:"sent",pp:"sent",sentence:"He ___ a postcard from Paris.",alt:["sended","sents","sendet","sanded"]},
+  {inf:"spend",fr:"dépenser/passer (du temps)",past:"spent",pp:"spent",sentence:"We ___ the day at the beach.",alt:["spended","spents","spendt","spendt"]},
+  {inf:"build",fr:"construire",past:"built",pp:"built",sentence:"They ___ a sandcastle on the beach.",alt:["builded","builts","bild","bielt"]},
+  {inf:"draw",fr:"dessiner",past:"drew",pp:"drawn",sentence:"She ___ a picture of her dog.",alt:["drawed","drawn","drewd","drawd"]},
+  {inf:"break",fr:"casser",past:"broke",pp:"broken",sentence:"He ___ his arm playing football.",alt:["breaked","broken","breaks","broket"]},
+  {inf:"drive",fr:"conduire",past:"drove",pp:"driven",sentence:"My dad ___ us to the airport.",alt:["drived","driven","draved","drived"]},
+  {inf:"win",fr:"gagner",past:"won",pp:"won",sentence:"Our team ___ the championship.",alt:["winned","woned","wins","wun"]},
+  {inf:"buy",fr:"acheter",past:"bought",pp:"bought",sentence:"She ___ a new bag.",alt:["buyed","boughted","bied","baught"]},
+  {inf:"wear",fr:"porter (vêtement)",past:"wore",pp:"worn",sentence:"He ___ his new jacket.",alt:["weared","worn","weard","wored"]},
+  {inf:"eat",fr:"manger",past:"ate",pp:"eaten",sentence:"We ___ pizza for dinner.",alt:["eated","eaten","eats","et"]},
+  {inf:"sleep",fr:"dormir",past:"slept",pp:"slept",sentence:"I ___ for ten hours last night.",alt:["sleeped","sleept","slepted","slapt"]},
+  {inf:"forget",fr:"oublier",past:"forgot",pp:"forgotten",sentence:"She ___ her password.",alt:["forgeted","forgotten","forgetted","forgat"]},
+  {inf:"catch",fr:"attraper",past:"caught",pp:"caught",sentence:"He ___ the ball perfectly.",alt:["catched","cought","cotch","caughted"]},
+  {inf:"teach",fr:"enseigner",past:"taught",pp:"taught",sentence:"My teacher ___ us a new rule.",alt:["teached","tought","teached","taugt"]},
+  {inf:"fight",fr:"se battre",past:"fought",pp:"fought",sentence:"The two teams ___ hard.",alt:["fighted","foughted","faught","faugt"]},
+  {inf:"choose",fr:"choisir",past:"chose",pp:"chosen",sentence:"She ___ the blue dress.",alt:["choosed","chosen","chosed","chosed"]},
+  {inf:"swim",fr:"nager",past:"swam",pp:"swum",sentence:"We ___ in the sea every day.",alt:["swimmed","swum","swimed","swammed"]},
+  {inf:"sing",fr:"chanter",past:"sang",pp:"sung",sentence:"She ___ a beautiful song.",alt:["singed","sung","sings","seng"]},
+  {inf:"ring",fr:"sonner",past:"rang",pp:"rung",sentence:"The phone ___ three times.",alt:["ringed","rung","rnged","reng"]},
+  {inf:"drink",fr:"boire",past:"drank",pp:"drunk",sentence:"He ___ too much coffee.",alt:["drinked","drunk","drinkd","drunked"]},
+  {inf:"fly",fr:"voler",past:"flew",pp:"flown",sentence:"We ___ to London last summer.",alt:["flied","flown","flewed","flaw"]},
+  {inf:"blow",fr:"souffler",past:"blew",pp:"blown",sentence:"The wind ___ the leaves away.",alt:["blowed","blown","blews","blaw"]},
+  {inf:"throw",fr:"lancer",past:"threw",pp:"thrown",sentence:"She ___ the ball over the fence.",alt:["throwed","thrown","throws","thraw"]},
+  {inf:"hide",fr:"se cacher",past:"hid",pp:"hidden",sentence:"He ___ the present under the bed.",alt:["hided","hidden","hidded","heded"]},
+  {inf:"ride",fr:"monter (à cheval/vélo)",past:"rode",pp:"ridden",sentence:"She ___ her horse every morning.",alt:["rided","ridden","rades","rodded"]},
+  {inf:"bite",fr:"mordre",past:"bit",pp:"bitten",sentence:"The dog ___ the postman.",alt:["bited","bitten","bited","bote"]},
+  {inf:"cut",fr:"couper",past:"cut",pp:"cut",sentence:"She ___ the paper into small pieces.",alt:["cutted","cuted","cuts","cat"]},
+  {inf:"hurt",fr:"blesser/faire mal",past:"hurt",pp:"hurt",sentence:"I ___ my ankle during training.",alt:["hurted","hurts","hurdt","hert"]},
+  {inf:"cost",fr:"coûter",past:"cost",pp:"cost",sentence:"The ticket ___ twenty euros.",alt:["costed","costs","coted","cust"]},
+  {inf:"shoot",fr:"tirer",past:"shot",pp:"shot",sentence:"He ___ three goals in one game.",alt:["shooted","shooted","shots","shote"]},
+  {inf:"steal",fr:"voler (qqch)",past:"stole",pp:"stolen",sentence:"Someone ___ her bicycle.",alt:["stealed","stolen","stealt","stoled"]},
+  {inf:"rise",fr:"se lever/monter",past:"rose",pp:"risen",sentence:"The sun ___ at six in the morning.",alt:["rised","risen","rises","rosed"]},
+  {inf:"freeze",fr:"geler",past:"froze",pp:"frozen",sentence:"The lake ___ in January.",alt:["freezed","frozen","freezett","frosed"]},
+  {inf:"shake",fr:"secouer",past:"shook",pp:"shaken",sentence:"She ___ the bottle before opening it.",alt:["shaked","shaken","shaket","shooked"]},
+  {inf:"wake",fr:"se réveiller",past:"woke",pp:"woken",sentence:"I ___ up at seven o'clock.",alt:["waked","woken","wakes","woked"]},
+  {inf:"shine",fr:"briller",past:"shone",pp:"shone",sentence:"The sun ___ all day.",alt:["shined","shone","shines","shined"]},
+  {inf:"sweep",fr:"balayer",past:"swept",pp:"swept",sentence:"She ___ the floor after dinner.",alt:["sweeped","sweeped","swepts","swapt"]},
+  {inf:"deal",fr:"distribuer/traiter",past:"dealt",pp:"dealt",sentence:"She ___ the cards one by one.",alt:["dealed","dealed","deals","delt"]},
+  {inf:"dream",fr:"rêver",past:"dreamt",pp:"dreamt",sentence:"I ___ about flying last night.",alt:["dreamed","dreamp","dreempt","dremt"]},
+  {inf:"smell",fr:"sentir (odeur)",past:"smelt",pp:"smelt",sentence:"The kitchen ___ amazing.",alt:["smelled","smelts","smillt","smalt"]},
+  {inf:"spell",fr:"épeler",past:"spelt",pp:"spelt",sentence:"He ___ his name for her.",alt:["spelled","spells","speld","spalt"]},
+  {inf:"light",fr:"allumer",past:"lit",pp:"lit",sentence:"She ___ the candles for dinner.",alt:["lighted","litd","lits","laight"]},
+  {inf:"lend",fr:"prêter",past:"lent",pp:"lent",sentence:"He ___ her his umbrella.",alt:["lended","lends","lentt","lant"]},
+  {inf:"bend",fr:"plier/se pencher",past:"bent",pp:"bent",sentence:"She ___ down to pick up the pen.",alt:["bended","bents","bemed","band"]},
+  {inf:"understand",fr:"comprendre",past:"understood",pp:"understood",sentence:"She ___ the question immediately.",alt:["understanded","undersood","understandd","understod"]},
+  {inf:"stick",fr:"coller",past:"stuck",pp:"stuck",sentence:"The stamp ___ perfectly.",alt:["sticked","stucked","stucks","stickt"]},
+  {inf:"dig",fr:"creuser",past:"dug",pp:"dug",sentence:"The dog ___ a hole in the garden.",alt:["digged","digs","dagt","dag"]},
+  {inf:"seek",fr:"chercher",past:"sought",pp:"sought",sentence:"She ___ help from her teacher.",alt:["seeked","seekted","seaked","soght"]},
+  {inf:"sell",fr:"vendre",past:"sold",pp:"sold",sentence:"He ___ his old computer.",alt:["selled","solded","sells","seld"]},
+  {inf:"split",fr:"diviser/partager",past:"split",pp:"split",sentence:"She ___ the bill with her friend.",alt:["splitted","splits","splited","splat"]},
+  {inf:"spread",fr:"étaler/répandre",past:"spread",pp:"spread",sentence:"He ___ the news very quickly.",alt:["spreaded","spred","spreet","spred"]},
+  {inf:"strike",fr:"frapper",past:"struck",pp:"struck",sentence:"Lightning ___ the old tree.",alt:["striked","strucked","strikes","stroket"]},
+  {inf:"swear",fr:"jurer",past:"swore",pp:"sworn",sentence:"He ___ he had not done it.",alt:["sweared","sworn","sweard","sworet"]},
+  {inf:"grind",fr:"moudre",past:"ground",pp:"ground",sentence:"She ___ the coffee beans.",alt:["grinded","grounded","grindet","grunded"]},
+  {inf:"hang",fr:"accrocher/pendre",past:"hung",pp:"hung",sentence:"She ___ the picture on the wall.",alt:["hanged","hungen","hings","heng"]},
+  {inf:"lay",fr:"poser/pondre",past:"laid",pp:"laid",sentence:"She ___ the baby in the crib.",alt:["layed","lain","laied","layd"]},
+  {inf:"mistake",fr:"confondre",past:"mistook",pp:"mistaken",sentence:"I ___ her for her sister.",alt:["mistaked","mistaken","mistaket","misstook"]},
+  {inf:"quit",fr:"quitter/arrêter",past:"quit",pp:"quit",sentence:"He ___ his job last week.",alt:["quitted","quits","quited","quit"]},
+  {inf:"shed",fr:"perdre (poils, feuilles)",past:"shed",pp:"shed",sentence:"The snake ___ its skin.",alt:["shedded","sheds","shedt","shad"]},
+  {inf:"shrink",fr:"rétrécir",past:"shrank",pp:"shrunk",sentence:"My jumper ___ in the wash.",alt:["shrunked","shrinked","shrink","shrenk"]},
+  {inf:"sink",fr:"couler",past:"sank",pp:"sunk",sentence:"The boat ___ in the storm.",alt:["sinked","sunk","sinkt","senk"]},
+  {inf:"bear",fr:"supporter/porter",past:"bore",pp:"born",sentence:"She ___ the pain with courage.",alt:["beared","born","bears","bored"]},
+  {inf:"beat",fr:"battre",past:"beat",pp:"beaten",sentence:"Our team ___ the champions.",alt:["beated","beaten","beted","bate"]},
+  {inf:"bind",fr:"attacher/relier",past:"bound",pp:"bound",sentence:"He ___ the parcel with string.",alt:["binded","bund","bindet","biend"]},
+  {inf:"burst",fr:"éclater/exploser",past:"burst",pp:"burst",sentence:"The balloon ___ with a loud bang.",alt:["bursted","bursts","birst","berst"]},
+  {inf:"cast",fr:"jeter/lancer",past:"cast",pp:"cast",sentence:"The director ___ a famous actress.",alt:["casted","casts","castet","cust"]},
+  {inf:"forecast",fr:"prévoir (météo)",past:"forecast",pp:"forecast",sentence:"The weather report ___ snow.",alt:["forecasted","forecasts","forecastd","forcasted"]},
+  {inf:"upset",fr:"contrarier/déranger",past:"upset",pp:"upset",sentence:"The news ___ the whole family.",alt:["upsetted","upsets","upseted","upsett"]},
+  {inf:"withdraw",fr:"retirer/se retirer",past:"withdrew",pp:"withdrawn",sentence:"She ___ some money from the bank.",alt:["withdrawed","withdrawn","withdrawd","withdruw"]},
+  {inf:"overcome",fr:"surmonter",past:"overcame",pp:"overcome",sentence:"She ___ her fear of the dark.",alt:["overcomed","overcome","overcamed","overcamed"]},
+  {inf:"undergo",fr:"subir",past:"underwent",pp:"undergone",sentence:"He ___ a long operation.",alt:["undergoed","undergone","underwented","underwaent"]},
+  {inf:"arise",fr:"surgir/se lever",past:"arose",pp:"arisen",sentence:"A problem ___ during the test.",alt:["arised","arisen","arises","arrosed"]},
+  {inf:"forbid",fr:"interdire",past:"forbade",pp:"forbidden",sentence:"The teacher ___ phones in class.",alt:["forbided","forbidden","forbad","forbaed"]},
+  {inf:"broadcast",fr:"diffuser",past:"broadcast",pp:"broadcast",sentence:"The news ___ live from Paris.",alt:["broadcasted","broadcastted","broadcastd","broadcasted"]},
+  {inf:"thrust",fr:"pousser/enfoncer",past:"thrust",pp:"thrust",sentence:"She ___ the letter into his hand.",alt:["thrusted","thrustd","thrusts","thrasted"]},
+  {inf:"tread",fr:"marcher sur",past:"trod",pp:"trodden",sentence:"He ___ carefully on the ice.",alt:["treaded","trodden","tread","tridd"]},
+  {inf:"wring",fr:"tordre",past:"wrung",pp:"wrung",sentence:"She ___ the water from the cloth.",alt:["wringed","wrang","wrings","wreng"]},
+  {inf:"stride",fr:"enjamber/marcher à grands pas",past:"strode",pp:"stridden",sentence:"He ___ confidently into the room.",alt:["strided","stridden","strides","strade"]},
+  {inf:"swear",fr:"jurer",past:"swore",pp:"sworn",sentence:"They ___ to tell the truth.",alt:["sweared","sworn","sweard","sworred"]},
+];
+
+// ── ADAPTIVE DIFFICULTY via localStorage ──
+const STORE_KEY = 'verbapp_v1';
+let perfData = {}; // {inf: {correct, wrong, lastSeen}}
+let sessionStreak = 0;
+let totalSessions = 0;
+
+function loadData() {
+  try {
+    const d = JSON.parse(localStorage.getItem(STORE_KEY) || '{}');
+    perfData = d.perf || {};
+    sessionStreak = d.streak || 0;
+    totalSessions = d.sessions || 0;
+  } catch(e) { perfData = {}; }
+}
+
+function saveData() {
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      perf: perfData, streak: sessionStreak, sessions: totalSessions
+    }));
+  } catch(e) {}
+}
+
+function recordResult(inf, correct) {
+  if (!perfData[inf]) perfData[inf] = {correct:0, wrong:0, lastSeen:0};
+  if (correct) { perfData[inf].correct++; sessionStreak++; }
+  else { perfData[inf].wrong++; sessionStreak = 0; }
+  perfData[inf].lastSeen = Date.now();
+  saveData();
+}
+
+// Score: higher = more likely to appear (more wrong, less correct, not seen recently)
+function verbWeight(v) {
+  const p = perfData[v.inf];
+  if (!p) return 10; // never seen → high priority
+  const net = p.wrong - p.correct;
+  const daysSince = (Date.now() - p.lastSeen) / 86400000;
+  return Math.max(1, 5 + net * 2 + Math.min(daysSince, 7));
+}
+
+function masteredCount() {
+  return Object.values(perfData).filter(p => p.correct >= 3 && p.correct > p.wrong * 2).length;
+}
+
+function weightedSample(n) {
+  const pool = [...VERBS];
+  const weights = pool.map(verbWeight);
+  const total = weights.reduce((a,b) => a+b, 0);
+  const chosen = [];
+  const used = new Set();
+  while (chosen.length < n && chosen.length < pool.length) {
+    let r = Math.random() * total;
+    // rebuild cumulative on remaining
+    let cum = 0;
+    let found = -1;
+    for (let i = 0; i < pool.length; i++) {
+      if (used.has(i)) continue;
+      cum += weights[i];
+      if (r <= cum) { found = i; break; }
+    }
+    if (found === -1) { // fallback pick first unused
+      for (let i = 0; i < pool.length; i++) { if (!used.has(i)) { found = i; break; } }
+    }
+    used.add(found);
+    chosen.push(pool[found]);
+  }
+  return chosen;
+}
+
+// ── STATE ──
+let curMode = '', sessionVerbs = [], sIdx = 0, sCorrect = 0, sMissed = [];
+let speedTimer = null, speedTime = 10;
+let flipped = false;
+
+function shuffle(a) { return [...a].sort(()=>Math.random()-0.5); }
+
+function goHome() {
+  clearInterval(speedTimer);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('home').classList.add('active');
+  document.getElementById('s-mastered').textContent = masteredCount();
+  document.getElementById('s-streak').textContent = sessionStreak;
+  document.getElementById('s-sessions').textContent = totalSessions;
+}
+
+function startMode(mode) {
+  curMode = mode;
+  const n = mode === 'speed' ? 20 : 20;
+  sessionVerbs = weightedSample(n);
+  sIdx = 0; sCorrect = 0; sMissed = [];
+  totalSessions++;
+  saveData();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  if (mode==='flash') { document.getElementById('flash-screen').classList.add('active'); loadFlash(); }
+  else if (mode==='choice') { document.getElementById('choice-screen').classList.add('active'); loadChoice(); }
+  else if (mode==='write') { document.getElementById('write-screen').classList.add('active'); loadWrite(); }
+  else if (mode==='fill') { document.getElementById('fill-screen').classList.add('active'); loadFill(); }
+  else if (mode==='speed') { document.getElementById('speed-screen').classList.add('active'); loadSpeed(); }
+}
+
+function setProg(prefix, idx, total) {
+  document.getElementById(prefix+'-ctr').textContent = (idx+1)+' / '+total;
+  document.getElementById(prefix+'-prog').style.width = Math.round((idx/total)*100)+'%';
+}
+
+function showResults() {
+  clearInterval(speedTimer);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('results-screen').classList.add('active');
+  const total = sessionVerbs.length;
+  const pct = Math.round((sCorrect/total)*100);
+  document.getElementById('r-emoji').textContent = pct>=80?'🎉':pct>=50?'💪':'📚';
+  document.getElementById('r-score').textContent = sCorrect+' / '+total;
+  document.getElementById('r-msg').textContent = pct>=80?'Excellent work, Yaara!':pct>=50?'Good effort — keep practising!':'Keep going — you\'ll get there!';
+  if (sMissed.length) {
+    document.getElementById('r-missed-list').innerHTML = sMissed.map(v=>`<div class="missed-item"><span class="missed-inf">${v.inf}</span><span class="missed-ans">→ ${v.past}</span></div>`).join('');
+    document.getElementById('r-missed').style.display = 'block';
+  } else { document.getElementById('r-missed').style.display = 'none'; }
+  document.getElementById('retry-btn').onclick = ()=>startMode(curMode);
+}
+
+// ── FLASHCARDS ──
+function loadFlash() {
+  flipped = false;
+  const v = sessionVerbs[sIdx];
+  setProg('flash', sIdx, sessionVerbs.length);
+  document.getElementById('flash-inf').textContent = v.inf;
+  document.getElementById('flash-past').textContent = v.past;
+  document.getElementById('flash-pp').textContent = v.pp;
+  document.getElementById('flash-answer').classList.remove('shown');
+  document.getElementById('flash-btns').style.display = 'none';
+  document.getElementById('flip-hint').style.display = '';
+}
+function flipCard() {
+  if (flipped) return;
+  flipped = true;
+  document.getElementById('flash-answer').classList.add('shown');
+  document.getElementById('flash-btns').style.display = 'flex';
+  document.getElementById('flip-hint').style.display = 'none';
+}
+function flashResult(correct) {
+  recordResult(sessionVerbs[sIdx].inf, correct);
+  if (!correct) sMissed.push(sessionVerbs[sIdx]);
+  else sCorrect++;
+  sIdx++;
+  if (sIdx >= sessionVerbs.length) { showResults(); return; }
+  loadFlash();
+}
+
+// ── MULTIPLE CHOICE (4 options) ──
+function loadChoice() {
+  const v = sessionVerbs[sIdx];
+  setProg('choice', sIdx, sessionVerbs.length);
+  document.getElementById('choice-inf').textContent = v.inf;
+  // pick 3 wrong answers from alt pool, deduplicated vs correct
+  const wrongs = shuffle(v.alt.filter(a=>a!==v.past)).slice(0,3);
+  const opts = shuffle([v.past, ...wrongs]);
+  document.getElementById('choice-opts').innerHTML = opts.map(o=>`<button class="mc-opt" onclick="pickChoice('${o.replace(/'/g,"\\'")}','${v.past.replace(/'/g,"\\'")}',this)">${o}</button>`).join('');
+  document.getElementById('choice-fb').textContent = '';
+  document.getElementById('choice-fb').className = 'feedback';
+  document.getElementById('choice-next').style.display = 'none';
+}
+function pickChoice(picked, correct, btn) {
+  document.querySelectorAll('.mc-opt').forEach(b=>b.classList.add('disabled'));
+  const fb = document.getElementById('choice-fb');
+  if (picked === correct) {
+    btn.classList.add('correct');
+    fb.textContent = 'Correct! ✓'; fb.className = 'feedback ok';
+    sCorrect++; recordResult(sessionVerbs[sIdx].inf, true);
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.mc-opt').forEach(b=>{ if(b.textContent===correct) b.classList.add('correct'); });
+    fb.textContent = 'The answer is: '+correct; fb.className = 'feedback bad';
+    sMissed.push(sessionVerbs[sIdx]); recordResult(sessionVerbs[sIdx].inf, false);
+  }
+  document.getElementById('choice-next').style.display = 'flex';
+}
+function nextChoice() { sIdx++; if(sIdx>=sessionVerbs.length){showResults();return;} loadChoice(); }
+
+// ── WRITE IT ──
+function loadWrite() {
+  const v = sessionVerbs[sIdx];
+  setProg('write', sIdx, sessionVerbs.length);
+  document.getElementById('write-inf').textContent = v.inf;
+  const inp = document.getElementById('write-input');
+  inp.value = ''; inp.className = 'verb-input'; inp.disabled = false;
+  document.getElementById('write-fb').textContent = '';
+  document.getElementById('write-fb').className = 'feedback';
+  document.getElementById('write-check').style.display = '';
+  document.getElementById('write-next').style.display = 'none';
+  setTimeout(()=>inp.focus(), 80);
+}
+function checkWrite() {
+  const v = sessionVerbs[sIdx];
+  const inp = document.getElementById('write-input');
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const fb = document.getElementById('write-fb');
+  inp.disabled = true;
+  document.getElementById('write-check').style.display = 'none';
+  document.getElementById('write-next').style.display = '';
+  if (corrects.includes(val)) {
+    inp.classList.add('correct'); fb.textContent = 'Correct! ✓'; fb.className = 'feedback ok';
+    sCorrect++; recordResult(v.inf, true);
+  } else {
+    inp.classList.add('wrong'); fb.textContent = 'The answer is: '+v.past; fb.className = 'feedback bad';
+    sMissed.push(v); recordResult(v.inf, false);
+  }
+}
+function nextWrite() { sIdx++; if(sIdx>=sessionVerbs.length){showResults();return;} loadWrite(); }
+
+// ── FILL IN BLANK ──
+function loadFill() {
+  const v = sessionVerbs[sIdx];
+  setProg('fill', sIdx, sessionVerbs.length);
+  document.getElementById('fib-sent').innerHTML = v.sentence.replace('___', '<span class="blank">___</span>');
+  document.getElementById('fib-fr').textContent = '🇫🇷 infinitif : ' + v.fr;
+  const inp = document.getElementById('fill-input');
+  inp.value = ''; inp.className = 'verb-input'; inp.disabled = false;
+  document.getElementById('fill-fb').textContent = '';
+  document.getElementById('fill-fb').className = 'feedback';
+  document.getElementById('fill-check').style.display = '';
+  document.getElementById('fill-next').style.display = 'none';
+  setTimeout(()=>inp.focus(), 80);
+}
+function checkFill() {
+  const v = sessionVerbs[sIdx];
+  const inp = document.getElementById('fill-input');
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const fb = document.getElementById('fill-fb');
+  inp.disabled = true;
+  document.getElementById('fill-check').style.display = 'none';
+  document.getElementById('fill-next').style.display = '';
+  if (corrects.includes(val)) {
+    inp.classList.add('correct'); fb.textContent = 'Correct! ✓'; fb.className = 'feedback ok';
+    sCorrect++; recordResult(v.inf, true);
+  } else {
+    inp.classList.add('wrong'); fb.textContent = 'The answer is: '+v.past; fb.className = 'feedback bad';
+    sMissed.push(v); recordResult(v.inf, false);
+  }
+}
+function nextFill() { sIdx++; if(sIdx>=sessionVerbs.length){showResults();return;} loadFill(); }
+
+// ── SPEED ROUND ──
+function loadSpeed() {
+  if (sIdx >= 20) { showResults(); return; }
+  const v = sessionVerbs[sIdx];
+  document.getElementById('speed-inf').textContent = v.inf;
+  document.getElementById('sp-score').textContent = sCorrect+' / 20';
+  const inp = document.getElementById('speed-input');
+  inp.value = ''; inp.className = 'verb-input'; inp.disabled = false;
+  document.getElementById('speed-fb').textContent = '';
+  document.getElementById('speed-fb').className = 'feedback';
+  clearInterval(speedTimer);
+  speedTime = 10;
+  setArc(10, 10, false);
+  speedTimer = setInterval(()=>{
+    speedTime--;
+    const warn = speedTime <= 5 && speedTime > 3;
+    const danger = speedTime <= 3;
+    setArc(speedTime, 10, false);
+    document.getElementById('t-num').textContent = speedTime;
+    document.getElementById('t-arc').className = 't-arc' + (danger?' danger':warn?' warn':'');
+    if (speedTime <= 0) { clearInterval(speedTimer); speedTimeUp(); }
+  }, 1000);
+  setTimeout(()=>inp.focus(), 80);
+}
+function setArc(t, max) {
+  const circ = 220;
+  document.getElementById('t-arc').style.strokeDashoffset = circ - (t/max)*circ;
+  document.getElementById('t-num').textContent = t;
+}
+function speedTimeUp() {
+  const v = sessionVerbs[sIdx];
+  document.getElementById('speed-input').disabled = true;
+  document.getElementById('speed-fb').textContent = 'Time! Answer: '+v.past;
+  document.getElementById('speed-fb').className = 'feedback bad';
+  sMissed.push(v); recordResult(v.inf, false);
+  sIdx++;
+  setTimeout(()=>loadSpeed(), 1300);
+}
+function checkSpeed() {
+  const v = sessionVerbs[sIdx];
+  const inp = document.getElementById('speed-input');
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  clearInterval(speedTimer);
+  inp.disabled = true;
+  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const fb = document.getElementById('speed-fb');
+  if (corrects.includes(val)) {
+    fb.textContent = '✓ Correct!'; fb.className = 'feedback ok';
+    sCorrect++; recordResult(v.inf, true);
+  } else {
+    fb.textContent = 'Answer: '+v.past; fb.className = 'feedback bad';
+    sMissed.push(v); recordResult(v.inf, false);
+  }
+  document.getElementById('sp-score').textContent = sCorrect+' / 20';
+  sIdx++;
+  setTimeout(()=>loadSpeed(), 900);
+}
+
+// ── INIT ──
+loadData();
+goHome();
+</script>
+</body>
+</html>
