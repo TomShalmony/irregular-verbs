@@ -137,11 +137,19 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
 .sentence-text { font-size: 18px; line-height: 1.7; color: var(--text); }
 .blank { display: inline-block; border-bottom: 2px solid var(--accent); min-width: 80px; color: var(--text-muted); font-style: italic; }
 .fr-hint { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+.hint-btn { background: none; border: 1px solid var(--border-strong); border-radius: 20px; font-size: 12px; color: var(--text-sec); padding: 4px 12px; cursor: pointer; font-family: inherit; transition: background 0.1s; }
+.hint-btn:active { background: var(--surface2); }
+.en-hint { font-size: 13px; color: var(--accent-text); margin-top: 5px; font-style: italic; }
 .input-wrap { display: flex; flex-direction: column; gap: 8px; }
 .verb-input { font-size: 20px; text-align: center; padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text); width: 100%; font-family: inherit; outline: none; transition: border-color 0.15s; }
 .verb-input:focus { border-color: var(--accent); }
 .verb-input.correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
 .verb-input.wrong { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
+
+/* ── SPEED TIMER SELECTOR ── */
+.timer-choice { padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-strong); background: var(--surface); color: var(--text); font-size: 18px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.1s; }
+.timer-choice:active { transform: scale(0.97); }
+.timer-choice.selected { background: var(--accent); color: white; border-color: transparent; }
 
 /* ── SPEED ── */
 .speed-top { text-align: center; }
@@ -302,6 +310,10 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <div class="q-card">
         <div class="sentence-text" id="fib-sent"></div>
         <div class="fr-hint" id="fib-fr"></div>
+        <div style="margin-top:8px">
+          <button class="hint-btn" id="fib-hint-btn" onclick="showFibHint()">💡 Hint</button>
+          <div class="en-hint" id="fib-en" style="display:none"></div>
+        </div>
       </div>
       <div class="input-wrap">
         <input class="verb-input" type="text" id="fill-input" placeholder="type the missing verb…"
@@ -322,6 +334,25 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <button class="back-btn" onclick="goHome()">‹</button>
       <span class="ex-title">Speed round</span>
     </div>
+
+    <!-- Timer picker (shown before game starts) -->
+    <div id="speed-setup" class="card-area" style="justify-content:center;gap:20px">
+      <div class="q-card" style="text-align:center">
+        <div class="verb-label" style="margin-bottom:10px">How long per verb?</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px" id="timer-opts">
+          <button class="timer-choice" onclick="selectTimer(5)">5 s</button>
+          <button class="timer-choice selected" onclick="selectTimer(10)">10 s</button>
+          <button class="timer-choice" onclick="selectTimer(15)">15 s</button>
+          <button class="timer-choice" onclick="selectTimer(20)">20 s</button>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="beginSpeed()">Start ⚡</button>
+      </div>
+    </div>
+
+    <!-- Game area (hidden until started) -->
+    <div id="speed-game" style="display:none;flex-direction:column;flex:1">
     <div class="card-area">
       <div class="speed-top">
         <div class="timer-wrap">
@@ -346,6 +377,7 @@ body { display: flex; flex-direction: column; min-height: 100vh; }
       <div class="btn-row" style="margin-top:auto">
         <button class="btn btn-primary" onclick="checkSpeed()">Submit</button>
       </div>
+    </div>
     </div>
   </div>
 
@@ -559,7 +591,7 @@ function weightedSample(n) {
 
 // ── STATE ──
 let curMode = '', sessionVerbs = [], sIdx = 0, sCorrect = 0, sMissed = [];
-let speedTimer = null, speedTime = 10;
+let speedTimer = null, speedTime = 10, selectedTimer = 10;
 let flipped = false;
 
 function shuffle(a) { return [...a].sort(()=>Math.random()-0.5); }
@@ -585,7 +617,14 @@ function startMode(mode) {
   else if (mode==='choice') { document.getElementById('choice-screen').classList.add('active'); loadChoice(); }
   else if (mode==='write') { document.getElementById('write-screen').classList.add('active'); loadWrite(); }
   else if (mode==='fill') { document.getElementById('fill-screen').classList.add('active'); loadFill(); }
-  else if (mode==='speed') { document.getElementById('speed-screen').classList.add('active'); loadSpeed(); }
+  else if (mode==='speed') {
+    document.getElementById('speed-screen').classList.add('active');
+    document.getElementById('speed-setup').style.display = 'flex';
+    document.getElementById('speed-game').style.display = 'none';
+    // reset timer choice UI
+    document.querySelectorAll('.timer-choice').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.timer-choice').forEach(b => { if(b.textContent.trim() === selectedTimer+' s') b.classList.add('selected'); });
+  }
 }
 
 function setProg(prefix, idx, total) {
@@ -685,7 +724,7 @@ function checkWrite() {
   const inp = document.getElementById('write-input');
   const val = inp.value.trim().toLowerCase();
   if (!val) return;
-  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const corrects = [v.past.toLowerCase(), ...v.past.toLowerCase().split('/').map(s=>s.trim())];
   const fb = document.getElementById('write-fb');
   inp.disabled = true;
   document.getElementById('write-check').style.display = 'none';
@@ -705,7 +744,10 @@ function loadFill() {
   const v = sessionVerbs[sIdx];
   setProg('fill', sIdx, sessionVerbs.length);
   document.getElementById('fib-sent').innerHTML = v.sentence.replace('___', '<span class="blank">___</span>');
-  document.getElementById('fib-fr').textContent = '🇫🇷 infinitif : ' + v.fr;
+  document.getElementById('fib-fr').textContent = '🇫🇷 ' + v.fr;
+  document.getElementById('fib-en').style.display = 'none';
+  document.getElementById('fib-en').textContent = '';
+  document.getElementById('fib-hint-btn').style.display = '';
   const inp = document.getElementById('fill-input');
   inp.value = ''; inp.className = 'verb-input'; inp.disabled = false;
   document.getElementById('fill-fb').textContent = '';
@@ -714,12 +756,18 @@ function loadFill() {
   document.getElementById('fill-next').style.display = 'none';
   setTimeout(()=>inp.focus(), 80);
 }
+function showFibHint() {
+  const v = sessionVerbs[sIdx];
+  document.getElementById('fib-en').textContent = '🇬🇧 to ' + v.inf;
+  document.getElementById('fib-en').style.display = 'block';
+  document.getElementById('fib-hint-btn').style.display = 'none';
+}
 function checkFill() {
   const v = sessionVerbs[sIdx];
   const inp = document.getElementById('fill-input');
   const val = inp.value.trim().toLowerCase();
   if (!val) return;
-  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const corrects = [v.past.toLowerCase(), ...v.past.toLowerCase().split('/').map(s=>s.trim())];
   const fb = document.getElementById('fill-fb');
   inp.disabled = true;
   document.getElementById('fill-check').style.display = 'none';
@@ -735,6 +783,17 @@ function checkFill() {
 function nextFill() { sIdx++; if(sIdx>=sessionVerbs.length){showResults();return;} loadFill(); }
 
 // ── SPEED ROUND ──
+function selectTimer(secs) {
+  selectedTimer = secs;
+  document.querySelectorAll('.timer-choice').forEach(b => {
+    b.classList.toggle('selected', b.textContent.trim() === secs+' s');
+  });
+}
+function beginSpeed() {
+  document.getElementById('speed-setup').style.display = 'none';
+  document.getElementById('speed-game').style.display = 'flex';
+  loadSpeed();
+}
 function loadSpeed() {
   if (sIdx >= 20) { showResults(); return; }
   const v = sessionVerbs[sIdx];
@@ -745,13 +804,13 @@ function loadSpeed() {
   document.getElementById('speed-fb').textContent = '';
   document.getElementById('speed-fb').className = 'feedback';
   clearInterval(speedTimer);
-  speedTime = 10;
-  setArc(10, 10, false);
+  speedTime = selectedTimer;
+  setArc(selectedTimer, selectedTimer, false);
   speedTimer = setInterval(()=>{
     speedTime--;
-    const warn = speedTime <= 5 && speedTime > 3;
-    const danger = speedTime <= 3;
-    setArc(speedTime, 10, false);
+    const warn = speedTime <= Math.ceil(selectedTimer*0.5) && speedTime > Math.ceil(selectedTimer*0.3);
+    const danger = speedTime <= Math.ceil(selectedTimer*0.3);
+    setArc(speedTime, selectedTimer, false);
     document.getElementById('t-num').textContent = speedTime;
     document.getElementById('t-arc').className = 't-arc' + (danger?' danger':warn?' warn':'');
     if (speedTime <= 0) { clearInterval(speedTimer); speedTimeUp(); }
@@ -779,7 +838,7 @@ function checkSpeed() {
   if (!val) return;
   clearInterval(speedTimer);
   inp.disabled = true;
-  const corrects = v.past.toLowerCase().split('/').map(s=>s.trim());
+  const corrects = [v.past.toLowerCase(), ...v.past.toLowerCase().split('/').map(s=>s.trim())];
   const fb = document.getElementById('speed-fb');
   if (corrects.includes(val)) {
     fb.textContent = '✓ Correct!'; fb.className = 'feedback ok';
